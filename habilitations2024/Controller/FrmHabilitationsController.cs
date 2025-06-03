@@ -20,9 +20,16 @@ namespace habilitations2024.Controller
             profilacces = new ProfilAccess();
         }
 
-        public List<Developpeur> GetDeveloppeurs()
+        public List<Developpeur> GetDeveloppeurs(Profil pro = null)
         {
-            return developpeuracces.GetLesDeveloppeur();
+            if (pro == null)
+            {
+                return developpeuracces.GetLesDeveloppeur();
+            }
+            else
+            {
+                return developpeuracces.GetLesDeveloppeur(pro);
+            }
         }
 
         public List<Profil> GetProfils()

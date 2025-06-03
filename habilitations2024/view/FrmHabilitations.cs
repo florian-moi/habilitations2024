@@ -38,6 +38,7 @@ namespace habilitations2024.view
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             textpwd.PasswordChar = '*';
             textpwd2.PasswordChar = '*';
+            comboBox2.DataSource = new List<Profil> { new Profil(0, "") }.Concat(controller.GetProfils()).ToList();
 
 
         }
@@ -49,22 +50,22 @@ namespace habilitations2024.view
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
-            
+
+
             if (dataGridView1.SelectedRows.Count > 0)
             {
                 groupBox3.Text = "Modifier un developpeur";
                 modifOn = true;
                 Developpeur dev = dataGridView1.SelectedRows[0].DataBoundItem as Developpeur;
                 groupBox1.Enabled = false;
-                Console.WriteLine("Selected Developpeur: " + dev.Nom + " " + dev.Prenom+" "+dev.Profil.IdProfil);
+                Console.WriteLine("Selected Developpeur: " + dev.Nom + " " + dev.Prenom + " " + dev.Profil.IdProfil);
                 textnom.Text = dev.Nom;
                 textprenom.Text = dev.Prenom;
                 textmail.Text = dev.Tel;
                 texttel.Text = dev.Email;
                 comboBox1.SelectedIndex = dev.Profil.IdProfil - 1;
-                
-                
+
+
 
 
 
@@ -74,12 +75,12 @@ namespace habilitations2024.view
 
         private void button5_Click(object sender, EventArgs e)
         {
-           var result = MessageBox.Show(
-               "Voulez-vous vraiment annuler l'ajout/modification en cours ?",
-                "Confirmation",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
+            var result = MessageBox.Show(
+                "Voulez-vous vraiment annuler l'ajout/modification en cours ?",
+                 "Confirmation",
+                 MessageBoxButtons.YesNo,
+                 MessageBoxIcon.Question
+             );
             if (result == DialogResult.Yes)
             {
                 groupBox1.Enabled = true;
@@ -115,7 +116,8 @@ namespace habilitations2024.view
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count > 0) { 
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
                 groupBox2.Enabled = true;
                 groupBox1.Enabled = false;
                 groupBox3.Enabled = false;
@@ -125,10 +127,10 @@ namespace habilitations2024.view
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if(textnom.Text != "" && textprenom.Text != "" && textmail.Text != "" && texttel.Text != "")
-            { 
+            if (textnom.Text != "" && textprenom.Text != "" && textmail.Text != "" && texttel.Text != "")
+            {
                 Profil pro = comboBox1.SelectedItem as Profil;
-                
+
                 if (modifOn)
                 {
                     Developpeur dev = dataGridView1.SelectedRows[0].DataBoundItem as Developpeur;
@@ -169,7 +171,7 @@ namespace habilitations2024.view
 
         private void button7_Click(object sender, EventArgs e)
         {
-            if((textpwd.Text != "" && textpwd2.Text != "") && (textpwd.Text == textpwd2.Text))
+            if ((textpwd.Text != "" && textpwd2.Text != "") && (textpwd.Text == textpwd2.Text))
             {
                 string mdp = textpwd.Text;
                 Developpeur dev = dataGridView1.SelectedRows[0].DataBoundItem as Developpeur;
@@ -191,5 +193,23 @@ namespace habilitations2024.view
             groupBox1.Enabled = true;
             groupBox3.Enabled = true;
         }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Profil pro = comboBox2.SelectedItem as Profil;
+            int idProfil = pro.IdProfil;
+            if (pro.Nom =="")
+            {
+                var dev = controller.GetDeveloppeurs();
+                dataGridView1.DataSource = dev;
+            }
+            else
+            {
+                var dev2 = controller.GetDeveloppeurs(pro);
+                dataGridView1.DataSource = dev2;
+            }
+        }
+
+
     }
 }

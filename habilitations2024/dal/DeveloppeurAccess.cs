@@ -12,39 +12,74 @@ namespace habilitations2024.dal
     {
         private readonly Acces acces = null;
 
-        public DeveloppeurAccess() {
+        public DeveloppeurAccess()
+        {
             acces = Acces.GetInstance();
         }
 
-        public List<Developpeur> GetLesDeveloppeur()
+        public List<Developpeur> GetLesDeveloppeur(Profil pro = null)
         {
             List<Developpeur> lesDevs = new List<Developpeur>();
+           
             if (acces.Manager != null)
             {
                 try
                 {
-                    string req = "SELECT developpeur.iddeveloppeur,developpeur.nom,prenom,tel,mail,developpeur.idprofil,profil.nom FROM developpeur JOIN profil ON developpeur.idprofil = profil.idprofil";
-                    List<Object[]> records = acces.Manager.ReqSelect(req);
-
-                    foreach (Object[] record in records)
+                    if (pro != null)
                     {
-                        if (records != null)
+                        int idprofil = pro.IdProfil;
+                        Dictionary<string, object> parameters = new Dictionary<string, object>();
+                        string req1 = "SELECT developpeur.iddeveloppeur,developpeur.nom,prenom,tel,mail,developpeur.idprofil,profil.nom FROM developpeur JOIN profil ON developpeur.idprofil = profil.idprofil WHERE Developpeur.idprofil=@idprofil";
+                        parameters.Add("@idprofil", idprofil);
+                        List<Object[]> records1 = acces.Manager.ReqSelect(req1,parameters);
+
+                        foreach (Object[] record in records1)
                         {
-                            Profil profil = new Profil((int)record[5], (string)record[6]);
-                            Developpeur dev = new Developpeur((int)record[0], (string)record[1], (string)record[2], (string)record[3], (string)record[4], profil);
-                            lesDevs.Add(dev);
+                            if (records1 != null)
+                            {
+                                Profil profil = new Profil((int)record[5], (string)record[6]);
+                                Developpeur dev = new Developpeur((int)record[0], (string)record[1], (string)record[2], (string)record[3], (string)record[4], profil);
+                                lesDevs.Add(dev);
+                            }
                         }
+                        return lesDevs;
+                    }
+
+                    else
+                    {
+
+                        string req = "SELECT developpeur.iddeveloppeur,developpeur.nom,prenom,tel,mail,developpeur.idprofil,profil.nom FROM developpeur JOIN profil ON developpeur.idprofil = profil.idprofil";
+                        List<Object[]> records = acces.Manager.ReqSelect(req);
+
+                        foreach (Object[] record in records)
+                        {
+                            if (records != null)
+                            {
+                                Profil profil = new Profil((int)record[5], (string)record[6]);
+                                Developpeur dev = new Developpeur((int)record[0], (string)record[1], (string)record[2], (string)record[3], (string)record[4], profil);
+                                lesDevs.Add(dev);
+                            }
+                        }
+                        return lesDevs;
                     }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }
-                return lesDevs;
-            }
+                
+            } 
             return null;
-
         }
+            
+        
+
+
+
+
+
+
+
 
         public void DelDeveloppeur(Developpeur developpeur)
         {
@@ -144,14 +179,15 @@ namespace habilitations2024.dal
         {
             if (acces.Manager != null)
             {
-                
-                    Dictionary<string, object> parameters = new Dictionary<string, object>();
-                    string req = "SELECT * FROM developpeur WHERE nom = @Nom AND prenom = @prenom AND pwd = SHA2(@pwd,256) AND idprofil = 5;";
-                    parameters.Add("@Nom", admin.nom);
-                    parameters.Add("@prenom", admin.prenom);
-                    parameters.Add("@pwd", admin.pwd);
-                try {
-                    List<Object[]> records = acces.Manager.ReqSelect(req,parameters);
+
+                Dictionary<string, object> parameters = new Dictionary<string, object>();
+                string req = "SELECT * FROM developpeur WHERE nom = @Nom AND prenom = @prenom AND pwd = SHA2(@pwd,256) AND idprofil = 5;";
+                parameters.Add("@Nom", admin.nom);
+                parameters.Add("@prenom", admin.prenom);
+                parameters.Add("@pwd", admin.pwd);
+                try
+                {
+                    List<Object[]> records = acces.Manager.ReqSelect(req, parameters);
 
                     if (records != null && records.Count > 0 && records[0] != null)
                     {
@@ -169,9 +205,9 @@ namespace habilitations2024.dal
                 }
             }
             return false;
-                
-            }
+
         }
     }
+}
 
 
